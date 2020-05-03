@@ -28,6 +28,7 @@ PACKAGE = {
     'setup_requires': ['vsc-install >= 0.15.1'],
     'install_requires': [
         'vsc-base >= 3.0.1',
+        'vsc-utils >= 2.1.2',
         'future >= 0.16.0',
     ],
 }
