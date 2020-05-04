@@ -22,8 +22,10 @@ Get the monthly usage for the given users on the given clusters
 import os
 import re
 import sys
+import yaml
 
 from collections import namedtuple
+from ConfigParser import ConfigParser
 from itertools import dropwhile
 from time import strftime, strptime
 from copy import deepcopy
@@ -268,7 +270,7 @@ class UsageReport(CLI):
 
 
     CLI_OPTIONS = {
-        'userfile': ("File containing the list of usernames to request info for", None, "store", None),
+        'userfile': ("File containing the groups of usernames to request info for (yaml format)", None, "store", None),
         'cluster': ("Cluster to get information for", None, "store", None),
         'recipient': ("email address of the person requiring the info", None, "store", None),
         'start': ("Start of time period for which to report (DD/MM/YYYY)", None, "store", None),
@@ -276,9 +278,9 @@ class UsageReport(CLI):
     }
 
     def load_users(self):
-        """Get a set of users from the given file"""
+        """Get a set of users from the given yaml file"""
         with open(self.options.userfile, "r") as userfile:
-            self.users = set([l.rstrip() for l in userfile.readlines() if l.startswith("vsc")])
+            self.users = yaml.load(userfile, Loader=yaml.FullLoader)
 
         logging.debug("Checking for users: %s", self.users)
 
@@ -333,9 +335,11 @@ class UsageReport(CLI):
 
         info = self.process(output)
 
-        relevant_info = dict(
-            filter(lambda kv: kv[0] in self.users, info.items())
-        )
+        relevant_info = {}
+        for (company, users) in self.users.items():
+            relevant_info[company] = dict(
+                filter(lambda kv: kv[0] in users, info.items())
+            )
 
         logging.debug("Desired user info: %s", relevant_info)
 
