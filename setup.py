@@ -30,6 +30,7 @@ PACKAGE = {
         'vsc-base >= 3.0.1',
         'vsc-utils >= 2.1.2',
         'future >= 0.16.0',
+        'pyyaml >= 5.3.18',
     ],
 }
 
