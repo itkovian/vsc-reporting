@@ -30,6 +30,7 @@ from itertools import dropwhile
 from time import strftime, strptime
 from copy import deepcopy
 
+from vsc.utils.mail import VscMail
 from vsc.utils.run import run
 from vsc.utils.script_tools import CLI
 from vsc.config.base import GENT_PRODUCTION_COMPUTE_CLUSTERS
@@ -40,6 +41,10 @@ SREPORT_TEMPLATE = "sreport --cluster={cluster} -T cpu,gres/gpu cluster UserUtil
 UsageInfo = namedtuple("UsageInfo", ["cpu", "gpu"])
 
 import logging
+
+
+def usage_info_to_string(usage):
+    return "cpu:%d:gpu:%d" % (usage.cpu, usage.gpu)
 
 class UsageReport(CLI):
 
@@ -116,7 +121,11 @@ class UsageReport(CLI):
                 filter(lambda kv: kv[0] in users, info.items())
             )
 
-        logging.debug("Desired user info: %s", relevant_info)
+        body = []
+        for (company, users) in sorted(relevant_info.items()):
+            for (user, usage) in sorted(users.items()):
+                body += ["%s:%s:%s:%s" % (cluster, company, user, usage_info_to_string(usage))]
+        return body
 
     def do(self, dry_run):
         """Get the information and mail it"""
@@ -127,8 +136,22 @@ class UsageReport(CLI):
 
         self.load_users()
 
+        body = []
         for cluster in clusters:
-            self.report(cluster)
+            body += self.report(cluster)
+
+        mail_body = "\n".join(body)
+        mail_subject = "HPC: usage report %s - %s" % (self.options.start, self.options.end)
+        mail_to = self.options.recipient
+
+        mail = VscMail("loudred.gastly.os")
+        mail.sendTextMail(
+            mail_to=mail_to,
+            mail_from="hpc-admin@lists.ugent.be",
+            reply_to="hpc-admin@lists.ugent.be",
+            mail_subject=mail_subject,
+            message=mail_body
+        )
 
 
 if __name__ == '__main__':
