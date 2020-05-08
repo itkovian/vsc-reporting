@@ -22,7 +22,7 @@ import vsc.install.shared_setup as shared_setup
 from vsc.install.shared_setup import ag
 
 PACKAGE = {
-    'version': '0.1.1',
+    'version': '0.1.2',
     'author': [ag],
     'maintainer': [ag],
     'setup_requires': ['vsc-install >= 0.15.1'],
@@ -30,7 +30,7 @@ PACKAGE = {
         'vsc-base >= 3.0.1',
         'vsc-utils >= 2.1.2',
         'future >= 0.16.0',
-        'python2-pyyaml >= 3.10',
+        'pyyaml >= 3.10',
     ],
 }
 
