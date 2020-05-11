@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: latin-1 -*-
+##
 # Copyright 2020-2020 Ghent University
 #
 # This file is part of vsc-reporting,
@@ -9,10 +12,16 @@
 #
 # All rights reserved.
 #
+##
 """
+Sync data from the slurm dbd through sacct to XDMoD.
+
 @author: Andy Georges (Ghent University)
 """
-#the vsc namespace is used in different folders allong the system
-#so explicitly declare this is also the vsc namespace
-import pkg_resources
-pkg_resources.declare_namespace(__name__)
+
+from vsc.reporting import xdmod
+
+if __name__ == '__main__':
+
+    sync = xdmod.XDMoDSync()
+    sync.main()

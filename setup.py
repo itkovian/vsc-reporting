@@ -31,6 +31,7 @@ PACKAGE = {
         'vsc-utils >= 2.1.2',
         'future >= 0.16.0',
         'pyyaml >= 3.10',
+        'kafka-python',
     ],
 }
 
